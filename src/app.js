@@ -1,14 +1,35 @@
-const express=require('express')
-const PORT=5000
+const express = require("express");
+const PORT = 5000;
 
-const app=express()
+const { adminMiddleware, userMiddleware } = require("../middleware");
 
-app.get('/',(req,res)=>{
+const app = express();
 
-    res.status(500).send('welcome to nodejs')
-})
+app.use("/admin", adminMiddleware);
 
-app.listen(PORT,()=>{
+app.use("/users", userMiddleware);
 
-    console.log(`app running on port ${PORT} `)
-})
+app.use("/login", (req, res) => {
+  res.send("kindly login");
+});
+
+app.get("/users/get-profile-page", (req, res) => {
+  res.send("user profile is loading");
+});
+
+app.get("/admin/get-users-for-admin", (req, res) => {
+  throw new Error("something went wrong");
+  res.send("here is list of users");
+});
+
+app.use((err, req, res, next) => {
+  if (err) {
+console.log('err',err)
+   res.send('something went wrong')
+  }
+  next();
+});
+
+app.listen(5000, () => {
+  console.log("server listening on port 5000");
+});
